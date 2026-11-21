@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoValuate AI — Second-Hand Car Price Predictor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand-lockup">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 17h14M6 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm16 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/>
+            <path d="M3 13l2.2-5.2A2 2 0 0 1 7.05 6.5h7.9a2 2 0 0 1 1.85 1.3L19 13h2a1 1 0 0 1 1 1v3h-2M3 13v4H2v-3a1 1 0 0 1 1-1Zm3-3h10"/>
+          </svg>
+        </div>
+        <div>
+          <h1>AutoValuate <span class="accent">AI</span></h1>
+          <p class="subtitle">Machine Learning Second-Hand Car Valuation</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="metric-pill" id="model-badge" title="Validation R-squared score on test set">
+          <span class="dot"></span>
+          <span id="model-badge-text">Loading ML model...</span>
+        </div>
+
+        <label class="toggle-chip" title="Recalculate automatically while adjusting sliders">
+          <input type="checkbox" id="live-mode-toggle" checked />
+          <span>Live Predict</span>
+        </label>
+
+        <div class="currency-switch" role="group" aria-label="Currency display">
+          <button type="button" class="currency-btn active" data-currency="INR">INR ₹</button>
+          <button type="button" class="currency-btn" data-currency="USD">USD $</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-grid">
+    <!-- Left Column: Input Form -->
+    <section class="panel form-panel" aria-labelledby="form-heading">
+      <div class="panel-header">
+        <div>
+          <h2 id="form-heading">Vehicle Details</h2>
+          <p class="panel-caption">Configure specs or pick a preset to estimate market resale value</p>
+        </div>
+        <span class="body-badge" id="body-type-badge">SUV</span>
+      </div>
+
+      <div class="presets-bar" aria-label="Quick vehicle presets">
+        <span class="presets-label">Quick Try:</span>
+        <button type="button" class="preset-btn" data-preset="creta">Hyundai Creta</button>
+        <button type="button" class="preset-btn" data-preset="swift">Maruti Swift</button>
+        <button type="button" class="preset-btn" data-preset="nexon_ev">Tata Nexon EV</button>
+        <button type="button" class="preset-btn" data-preset="bmw">BMW 3 Series</button>
+      </div>
+
+      <form id="prediction-form" novalidate>
+        <div class="form-row two-col">
+          <div class="field">
+            <label for="brand-select">Brand</label>
+            <select id="brand-select" name="brand" required></select>
+          </div>
+          <div class="field">
+            <label for="model-select">Model</label>
+            <select id="model-select" name="model" required></select>
+          </div>
+        </div>
+
+        <div class="field slider-field">
+          <div class="field-top">
+            <label for="year-range">Manufacturing Year</label>
+            <span class="value-badge" id="year-display">2021</span>
+          </div>
+          <input type="range" id="year-range" name="year" min="1970" max="2026" value="2021" />
+          <div class="range-scale">
+            <span id="min-year-label">1970</span>
+            <span id="car-age-label">5 yrs old</span>
+            <span id="max-year-label">2026</span>
+          </div>
+        </div>
+
+        <div class="field slider-field">
+          <div class="field-top">
+            <label for="km-input">Kilometers Driven</label>
+            <div class="inline-number">
+              <input type="number" id="km-input" min="0" max="10000000" step="500" value="42000" aria-label="Kilometers driven exact input" />
+              <span>km</span>
+            </div>
+          </div>
+          <input type="range" id="km-range" min="1000" max="220000" step="1000" value="42000" />
+          <div class="range-scale">
+            <span>1,000 km</span>
+            <span>110,000 km</span>
+            <span>220,000 km</span>
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="field">
+            <label for="fuel-select">Fuel Type</label>
+            <select id="fuel-select" name="fuel_type" required></select>
+          </div>
+          <div class="field">
+            <label for="transmission-select">Transmission</label>
+            <select id="transmission-select" name="transmission" required></select>
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="field">
+            <label for="owner-select">Ownership History</label>
+            <select id="owner-select" name="owner" required></select>
+          </div>
+          <div class="field">
+            <label for="seller-select">Seller Type</label>
+            <select id="seller-select" name="seller_type" required></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Overall Vehicle Condition</label>
+          <div class="segmented-group" id="condition-group" role="radiogroup" aria-label="Vehicle condition"></div>
+        </div>
+
+        <details class="specs-details">
+          <summary>Advanced Technical Specifications (Auto-filled)</summary>
+          <div class="form-row three-col specs-grid">
+            <div class="field">
+              <label for="engine-cc">Engine (CC)</label>
+              <input type="number" id="engine-cc" min="0" max="6500" step="1" value="1497" />
+            </div>
+            <div class="field">
+              <label for="power-bhp">Power (BHP)</label>
+              <input type="number" id="power-bhp" min="30" max="700" step="0.5" value="113" />
+            </div>
+            <div class="field">
+              <label for="mileage-kmpl">Mileage (km/l)</label>
+              <input type="number" id="mileage-kmpl" min="5" max="45" step="0.1" value="18.5" />
+            </div>
+          </div>
+        </details>
+
+        <div class="error-banner" id="error-banner" role="alert" hidden></div>
+
+        <button type="submit" class="submit-btn" id="predict-btn">
+          <span>Estimate Resale Price</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M5 12h14M13 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </form>
+    </section>
+
+    <!-- Right Column: Valuation Outputs & Analytics -->
+    <section class="results-column">
+      <!-- Price Hero -->
+      <article class="panel hero-panel" aria-live="polite">
+        <div class="hero-top">
+          <div>
+            <span class="eyebrow">Estimated Fair Market Value</span>
+            <div class="price-display" id="predicted-price">₹ --</div>
+            <p class="price-sub" id="predicted-subtext">Calculating valuation...</p>
+          </div>
+          <div class="retention-ring-card">
+            <span class="retention-label">Value Retained</span>
+            <strong class="retention-value" id="retained-percent">--%</strong>
+            <span class="retention-ref" id="new-price-ref">vs. new price</span>
+          </div>
+        </div>
+
+        <div class="range-bar-wrap">
+          <div class="range-labels">
+            <span>Fair Range Low: <strong id="range-low">--</strong></span>
+            <span>Fair Range High: <strong id="range-high">--</strong></span>
+          </div>
+          <div class="confidence-track">
+            <div class="confidence-fill"></div>
+            <div class="confidence-marker" title="Model Point Estimate"></div>
+          </div>
+        </div>
+
+        <div class="summary-chips" id="vehicle-summary-chips"></div>
+      </article>
+
+      <!-- Forecast & Impact Grid -->
+      <div class="analytics-grid">
+        <article class="panel chart-panel">
+          <div class="panel-header compact">
+            <div>
+              <h3>5-Year Resale Forecast</h3>
+              <p class="panel-caption">Projected value assuming ~11,500 km/year</p>
+            </div>
+          </div>
+          <div id="forecast-chart" class="svg-chart-container"></div>
+        </article>
+
+        <article class="panel impact-panel">
+          <div class="panel-header compact">
+            <div>
+              <h3>Price Drivers</h3>
+              <p class="panel-caption">ML sensitivity vs. a 5-yr / 55k km baseline</p>
+            </div>
+          </div>
+          <div id="impacts-list" class="impacts-list"></div>
+        </article>
+      </div>
+
+      <!-- Model Metrics & Comparison History -->
+      <article class="panel tabs-panel">
+        <div class="tabs-header" role="tablist">
+          <button type="button" class="tab-btn active" data-tab="insights" role="tab" aria-selected="true">
+            ML Model Telemetry
+          </button>
+          <button type="button" class="tab-btn" data-tab="history" role="tab" aria-selected="false">
+            Saved Comparisons (<span id="history-count">0</span>)
+          </button>
+        </div>
+
+        <div class="tab-content active" id="tab-insights">
+          <div class="metrics-strip" id="model-metrics-grid"></div>
+          <h4 class="mini-heading" id="importance-heading">Global Feature Importance</h4>
+          <div class="importance-bars" id="global-importance-list"></div>
+          <h4 class="mini-heading comparison-heading">Algorithm Benchmark Comparison (Best Selected)</h4>
+          <div class="table-scroll">
+            <table class="comparison-table" aria-label="ML model benchmark comparison">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>R²</th>
+                  <th>MAE</th>
+                  <th>RMSE</th>
+                  <th>MAPE</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="model-comparison-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-history">
+          <div class="history-toolbar">
+            <p class="panel-caption">Click any past estimate to reload its configuration</p>
+            <button type="button" class="text-btn" id="clear-history-btn">Clear History</button>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

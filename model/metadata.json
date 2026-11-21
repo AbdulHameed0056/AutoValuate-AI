@@ -1,0 +1,144 @@
+{
+  "metrics": {
+    "algorithm": "Hist Gradient Boosting",
+    "r2": 0.9904,
+    "mae": 43925,
+    "rmse": 89634,
+    "mape_percent": 6.06,
+    "train_time_sec": 2.661,
+    "train_samples": 2856,
+    "test_samples": 714
+  },
+  "model_comparison": [
+    {
+      "algorithm": "Hist Gradient Boosting",
+      "r2": 0.9904,
+      "mae": 43925,
+      "rmse": 89634,
+      "mape_percent": 6.06,
+      "train_time_sec": 2.661,
+      "is_best": true
+    },
+    {
+      "algorithm": "Gradient Boosting",
+      "r2": 0.9883,
+      "mae": 50273,
+      "rmse": 99019,
+      "mape_percent": 6.59,
+      "train_time_sec": 3.468,
+      "is_best": false
+    },
+    {
+      "algorithm": "Extra Trees",
+      "r2": 0.9841,
+      "mae": 62864,
+      "rmse": 115473,
+      "mape_percent": 9.69,
+      "train_time_sec": 1.54,
+      "is_best": false
+    },
+    {
+      "algorithm": "Random Forest",
+      "r2": 0.9699,
+      "mae": 83114,
+      "rmse": 158760,
+      "mape_percent": 11.58,
+      "train_time_sec": 1.138,
+      "is_best": false
+    },
+    {
+      "algorithm": "Decision Tree",
+      "r2": 0.9588,
+      "mae": 104529,
+      "rmse": 185717,
+      "mape_percent": 16.02,
+      "train_time_sec": 0.074,
+      "is_best": false
+    },
+    {
+      "algorithm": "K-Nearest Neighbors",
+      "r2": 0.9218,
+      "mae": 119359,
+      "rmse": 255763,
+      "mape_percent": 16.92,
+      "train_time_sec": 0.021,
+      "is_best": false
+    },
+    {
+      "algorithm": "Ridge Regression",
+      "r2": 0.8488,
+      "mae": 129834,
+      "rmse": 355590,
+      "mape_percent": 11.44,
+      "train_time_sec": 0.122,
+      "is_best": false
+    }
+  ],
+  "feature_importances": [
+    {
+      "feature": "car_age",
+      "label": "Vehicle Age",
+      "importance": 44.22
+    },
+    {
+      "feature": "engine_cc",
+      "label": "Engine Capacity (CC)",
+      "importance": 34.51
+    },
+    {
+      "feature": "brand",
+      "label": "Brand",
+      "importance": 5.79
+    },
+    {
+      "feature": "max_power_bhp",
+      "label": "Max Power (BHP)",
+      "importance": 5.75
+    },
+    {
+      "feature": "km_driven",
+      "label": "Kilometers Driven",
+      "importance": 3.48
+    },
+    {
+      "feature": "owner",
+      "label": "Owner History",
+      "importance": 2.31
+    },
+    {
+      "feature": "model",
+      "label": "Model",
+      "importance": 1.17
+    },
+    {
+      "feature": "body_type",
+      "label": "Body Type",
+      "importance": 1.01
+    },
+    {
+      "feature": "condition",
+      "label": "Condition",
+      "importance": 0.65
+    },
+    {
+      "feature": "transmission",
+      "label": "Transmission",
+      "importance": 0.54
+    },
+    {
+      "feature": "fuel_type",
+      "label": "Fuel Type",
+      "importance": 0.25
+    },
+    {
+      "feature": "mileage_kmpl",
+      "label": "Fuel Economy",
+      "importance": 0.23
+    },
+    {
+      "feature": "seller_type",
+      "label": "Seller Type",
+      "importance": 0.09
+    }
+  ]
+}
